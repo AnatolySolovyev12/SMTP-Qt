@@ -45,8 +45,6 @@ void Smtp::sendMail(const QString& from, const QString& to, const QString& subje
 
 
 
-
-
 Smtp::~Smtp()
 {
     delete t;
