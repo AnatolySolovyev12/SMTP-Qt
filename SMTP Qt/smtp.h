@@ -26,15 +26,18 @@ public:
     void sendMail(const QString& from, const QString& to,
         const QString& subject, const QString& body);
 
+
 signals:
-    void status(const QString&);
+    void status(const QString&); // самоделашный сигнал для вывод в объект основного класса. 
 
 private slots:
-    void stateChanged(QAbstractSocket::SocketState socketState);
-    void errorReceived(QAbstractSocket::SocketError socketError);
-    void disconnected();
-    void connected();
-    void readyRead();
+    //сигналы для них используются бибилиотечные
+    void stateChangedInfo(QAbstractSocket::SocketState socketState);
+    void errorReceivedInfo(QAbstractSocket::SocketError socketError);
+    void disconnectedInfo();
+    void connectedInfo();
+    void readyReadFromSocket();
+
 
 private:
     int timeout;
