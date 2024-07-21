@@ -47,8 +47,10 @@ void Smtp::sendMail(const QString& from, const QString& to, const QString& subje
 
 Smtp::~Smtp()
 {
+    qDebug() << "OBJECT WAS DELETE";
     delete t;
     delete socket;
+    qDebug() << "SOCKET WAS DELETE";
 }
 
 
@@ -70,9 +72,9 @@ void Smtp::errorReceivedInfo(QAbstractSocket::SocketError socketError) // Сигнал
 
 void Smtp::disconnectedInfo()
 {
-
     qDebug() << "disconneted";
     qDebug() << "error " << socket->errorString();
+   // emit status(tr("Need delete"));
 }
 
 
@@ -242,14 +244,11 @@ void Smtp::readyReadFromSocket()
         // here, we just close.
         state = Close;
         emit status(tr("Message sent")); // emit - макрос сомнительной полезнлости
-
-       // return;
     }
 
 
     else if (state == Close)
     {
-        deleteLater(); // отложенное удаление объекта после возврата в цикл обработчика событий.
         return;
     }
     

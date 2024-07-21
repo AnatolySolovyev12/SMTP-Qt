@@ -97,12 +97,19 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QLineEdit" name="uname"/>
+      <widget class="QLineEdit" name="uname">
+       <property name="text">
+        <string>bakalavr51423@gmail.com</string>
+       </property>
+      </widget>
      </item>
      <item row="3" column="1">
       <widget class="QLineEdit" name="paswd">
        <property name="inputMask">
         <string/>
+       </property>
+       <property name="text">
+        <string>fyyw mdgt rnzj jiqg</string>
        </property>
        <property name="echoMode">
         <enum>QLineEdit::Normal</enum>
@@ -110,10 +117,18 @@
       </widget>
      </item>
      <item row="4" column="1">
-      <widget class="QLineEdit" name="rcpt"/>
+      <widget class="QLineEdit" name="rcpt">
+       <property name="text">
+        <string>bakalavr12@mail.ru</string>
+       </property>
+      </widget>
      </item>
      <item row="5" column="1">
-      <widget class="QLineEdit" name="subject"/>
+      <widget class="QLineEdit" name="subject">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
      </item>
      <item row="6" column="1">
       <widget class="QPlainTextEdit" name="msg"/>
