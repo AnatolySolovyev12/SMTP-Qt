@@ -243,12 +243,19 @@ void Smtp::readyReadFromSocket()
         t->flush();
         // here, we just close.
         state = Close;
-        emit status(tr("Message sent"));
+        emit status(tr("Message sent")); // emit - макрос сомнительной полезнлости
+
+       // return;
     }
 
 
     else if (state == Close)
     {
+        deleteLater(); // отложенное удаление объекта после возврата в цикл обработчика событий.
+
+
+
+
         return;
     }
     
