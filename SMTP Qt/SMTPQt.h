@@ -2,7 +2,6 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_SMTPQt.h"
-
 #include <QMessageBox>
 
 namespace Ui {
@@ -18,8 +17,8 @@ public:
     ~SMTPQt();
 
 private slots:
-    void sendMail();
-    void mailSent(QString);
+    void sendMailfromButton();
+    void MessegeAboutMailSend(QString);
 
 private:
     Ui::SMTPQtClass ui;
