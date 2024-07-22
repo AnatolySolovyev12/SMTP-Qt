@@ -3,6 +3,10 @@
 
 Smtp::Smtp(const QString& user, const QString& pass, const QString& host, int port, int timeout)
 {
+    //Проверяем версию SSL
+
+    qDebug() << QSslSocket::supportsSsl() << QSslSocket::sslLibraryBuildVersionString() << QSslSocket::sslLibraryVersionString() << QSslSocket::sslLibraryVersionNumber() << "\n";
+   
     socket = new QSslSocket(this);
 
     //сигналы для них используются бибилиотечные
@@ -43,62 +47,54 @@ void Smtp::sendMail(const QString& from, const QString& to, const QString& subje
 }
 
 
-
-
 Smtp::~Smtp()
 {
-    qDebug() << "OBJECT WAS DELETE";
     delete t;
     delete socket;
-    qDebug() << "SOCKET WAS DELETE";
+
+    qDebug() << "\nObject, socket and t was delete.";
 }
-
-
 
 
 void Smtp::stateChangedInfo(QAbstractSocket::SocketState socketState) // Это сигнал который генерируетсмя всякий раз когда меняется состояние сокета. Идёт в комплекте с библиотекой. socketState это новое состояние. 
 {
-    qDebug() << "stateChanged " << socketState;
+    qDebug() << "\nstateChanged " << socketState;
 }
-
 
 
 void Smtp::errorReceivedInfo(QAbstractSocket::SocketError socketError) // Сигнал который выдаётся после возгникновения ошибки. Идёт в комплекте с библиотекой. socketError описывает тип произошедшей ошибки.
 {
-    qDebug() << "error " << socketError;
+    qDebug() << "\nerror " << socketError;
 }
-
 
 
 void Smtp::disconnectedInfo()
 {
-    qDebug() << "disconneted";
-    qDebug() << "error " << socket->errorString();
-   // emit status(tr("Need delete"));
+    qDebug() << "\ndisconneted";
+    qDebug() << "\nerror " << socket->errorString();
 }
-
 
 
 void Smtp::connectedInfo()
 {
-    qDebug() << "\nConnected\n";
+    qDebug() << "\nConnected";
 }
 
 
-
 //Важно. Для того чтобы пройти авторизацию в Gmail, необходимо создать 16-значный пароль приложения. Для этого необходимо ообязательно включить 2-х факторную авторизацию иначе не пустит.
-
 void Smtp::readyReadFromSocket()
 {
     userByte = user.toUtf8();
     passByte = pass.toUtf8();
 
-    qDebug() << "\nreadyRead\n";
+    qDebug() << "\nreadyReadFromSocket()\n";
 
     // SMTP is line-oriented
-    // 
-    //Будем принимать ответы от сокета в виде 3-х значных кодов.
+    
+    //Будем принимать ответы от сокета в виде 3-х значных кодов с пояснением.
+
     int count = 1;
+
     QString responseLine;
 
     do
@@ -107,18 +103,12 @@ void Smtp::readyReadFromSocket()
         response += responseLine;
 
         qDebug() << count << " - " << responseLine;
-        if (!socket->canReadLine())
-        {
-            qDebug() << count << " - " << response;
-        }
+
         count++;
 
     } while (socket->canReadLine() && responseLine[3] != ' ');
 
     responseLine.truncate(3); // отсекаем строку по индексу позиции. В частности отсекаем "\0"
-
-  //  qDebug() << "Server response code:" << responseLine;
-  // qDebug() << "Server response: " << response;
 
     //После подключения к порту сервера он должен ответить с кодом 220
 
@@ -159,7 +149,7 @@ void Smtp::readyReadFromSocket()
     else if (state == Auth && responseLine == "250")
     {
         // Trying AUTH
-        qDebug() << "Auth";
+        qDebug() << "\nAuth";
         *t << "AUTH LOGIN" << "\r\n"; // посылаем команду на авторизацию
         t->flush();
         state = User;
@@ -170,7 +160,7 @@ void Smtp::readyReadFromSocket()
     else if (state == User && responseLine == "334")
     {
         //Trying User        
-        qDebug() << "Username";
+        qDebug() << "\nUsername";
         //GMAIL is using XOAUTH2 protocol, which basically means that password and username has to be sent in base64 coding
         //https://developers.google.com/gmail/xoauth2_protocol
         *t << QByteArray().append(userByte).toBase64() << "\r\n";
@@ -184,7 +174,7 @@ void Smtp::readyReadFromSocket()
     else if (state == Pass && responseLine == "334")
     {
         //Trying pass
-        qDebug() << "Pass";
+        qDebug() << "\nPass";
         *t << QByteArray().append(passByte).toBase64() << "\r\n";
         t->flush();
 
@@ -198,7 +188,7 @@ void Smtp::readyReadFromSocket()
         // HELO response was okay (well, it has to be)
 
         //Apperantly for Google it is mandatory to have MAIL FROM and RCPT email formated the following way -> <email@gmail.com>
-        qDebug() << "MAIL FROM:<" << from << ">";
+        qDebug() << "\nMAIL FROM:<" << from << ">";
         *t << "MAIL FROM:<" << from << ">\r\n";
         t->flush();
         state = Rcpt;
@@ -238,24 +228,17 @@ void Smtp::readyReadFromSocket()
 
     else if (state == Quit && responseLine == "250")
     {
-
+        QMessageBox::information(0, tr("Qt Simple SMTP client"), tr("Message was send.\n\n"));
         *t << "QUIT\r\n";
         t->flush();
-        // here, we just close.
         state = Close;
         emit status(tr("Message sent")); // emit - макрос сомнительной полезнлости
-
-       // return;
     }
 
 
     else if (state == Close)
     {
         deleteLater(); // отложенное удаление объекта после возврата в цикл обработчика событий.
-
-
-
-
         return;
     }
     

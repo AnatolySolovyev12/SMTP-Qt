@@ -26,19 +26,10 @@ void SMTPQt::MessegeAboutMailSend(QString status)
 {
     if (status == "Message sent")
     {
-       // QMessageBox::warning(0, tr("Qt Simple SMTP client"), tr("Message sent!\n\n"));
+        qDebug() << "\nMail was send.";
 
-        qDebug() << "Mail was send.";
+        smtp = nullptr;
     }
-
-    if (status == "Need delete")
-    {
-        //delete smtp;
-       // smtp = nullptr;
-
-       // qDebug() << "Delete smtp object.";
-    }
-
 }
 
 SMTPQt::~SMTPQt()
