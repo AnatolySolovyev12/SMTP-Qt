@@ -31,22 +31,25 @@ void Smtp::sendMail(const QString& from, const QString& to, const QString& subje
     message.append("From: " + from + "\n");
     message.append("Subject: " + subject + "\n");
 
-    //Let's intitiate multipart MIME with cutting boundary "frontier"
-    message.append("MIME-Version: 1.0\n");
-    message.append("Content-Type: multipart/mixed; boundary=frontier\n\n");
+
+    //ƒалеее используем MIME протокол дл€ отправки вложенных файлов.
+    message.append("MIME-Version: 1.0\n"); // необ€зательный начальный заголовок.
+    message.append("Content-Type: multipart/mixed; boundary=frontier\n\n"); // определ€ем отдел€ющее слово. ¬ нашем случае frontier
     message.append("--frontier\n");
     //message.append( "Content-Type: text/html\n\n" );  //Uncomment this for HTML formating, coment the line below
-    message.append("Content-Type: text/plain\n\n");
+    message.append("Content-Type: text/plain\n\n"); //определ€ем формат тела письма. ѕо сути это всегда "text/plain"
     message.append(body);
 
     message.append("\n\n");
 
     if (!files.isEmpty())
     {
-        qDebug() << "Files to be sent: " << files.size();
+        qDebug() << "\nFiles to be sent: " << files.size(); // получаем количество элементов в списке
+       
         foreach(QString filePath, files)
         {
             QFile file(filePath);
+
             if (file.exists())
             {
                 if (!file.open(QIODevice::ReadOnly))
@@ -55,8 +58,13 @@ void Smtp::sendMail(const QString& from, const QString& to, const QString& subje
                     QMessageBox::warning(0, tr("Qt Simple SMTP client"), tr("Couldn't open the file\n\n"));
                     return;
                 }
+
                 QByteArray bytes = file.readAll(); // считываем весь файл и переводим его в байты
+
                 message.append("--frontier\n");
+                // ќпредел€ем формат файлов. –абоим вариантом было предложено использовать "application/octet-stream". 
+                // "Content-Disposition: attachment" - сообщаем что файл следует загружать как вложение а не как текст в письмо.
+                // "Content-Transfer-Encoding" - указываем в какой кодировке отправл€ть. 
                 message.append("Content-Type: application/octet-stream\nContent-Disposition: attachment; filename=" + QFileInfo(file.fileName()).fileName() + ";\nContent-Transfer-Encoding: base64\n\n");
                 message.append(bytes.toBase64());
                 message.append("\n");
@@ -66,7 +74,7 @@ void Smtp::sendMail(const QString& from, const QString& to, const QString& subje
     else
         qDebug() << "No attachments found";
 
-    message.append("--frontier--\n");
+    message.append("--frontier--\n"); // MIME - протокол требует завершать свои вложени€ двойным тире "--". 
 
     message.replace(QString::fromLatin1("\n"), QString::fromLatin1("\r\n")); // зачем то производитс€ замена символа \n на \r\n
     message.replace(QString::fromLatin1("\r\n.\r\n"), QString::fromLatin1("\r\n..\r\n")); // аналогично. 
