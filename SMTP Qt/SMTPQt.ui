@@ -6,21 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>500</height>
+    <width>390</width>
+    <height>466</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>SMTPQt</string>
   </property>
+  <property name="animated">
+   <bool>true</bool>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>150</x>
+      <x>30</x>
       <y>10</y>
       <width>331</width>
-      <height>392</height>
+      <height>391</height>
      </rect>
     </property>
     <layout class="QFormLayout" name="formLayout">
@@ -78,12 +81,33 @@
      <item row="6" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>Message:</string>
+        <string>Messege:</string>
        </property>
       </widget>
      </item>
      <item row="0" column="1">
       <widget class="QLineEdit" name="server">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string comment="123" extracomment="321"/>
+       </property>
+       <property name="whatsThis">
+        <string/>
+       </property>
+       <property name="accessibleName">
+        <string/>
+       </property>
+       <property name="accessibleDescription">
+        <string/>
+       </property>
        <property name="text">
         <string>smtp.gmail.com</string>
        </property>
@@ -155,7 +179,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>600</width>
+     <width>390</width>
      <height>21</height>
     </rect>
    </property>
